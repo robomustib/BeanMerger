@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bohnen-Verschmelzer</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    @keyframes bmg-pulse-selected {
+      0% { transform: scale(1.1); box-shadow: 0 5px 15px rgba(90, 138, 111, 0.4); }
+      50% { transform: scale(1.15); box-shadow: 0 7px 20px rgba(90, 138, 111, 0.5); }
+      100% { transform: scale(1.1); box-shadow: 0 5px 15px rgba(90, 138, 111, 0.4); }
+    }
+    @keyframes bmg-grow {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    @keyframes bmg-bounce-in {
+       0% { transform: scale(0.7); opacity: 0; }
+       60% { transform: scale(1.05); opacity: 1; }
+       100% { transform: scale(1); }
+    }
+
+    #bean-merger-game {
+      font-family: 'Nunito', 'Helvetica Neue', Arial, sans-serif;
+      background: #fdfaf3;
+      color: #3d352e;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 600px;
+      margin: 20px auto;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #bean-merger-game .bmg-section {
+      background: #ffffff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    #bean-merger-game h2 {
+      margin-top: 0;
+      color: #4a7a5f;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 10px;
+      font-size: 1.5em;
+      font-weight: 700;
+    }
+
+    #bean-merger-game p {
+        font-size: 1em;
+        line-height: 1.5;
+    }
+
+    #bean-merger-game #bmg-beans {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      min-height: 80px;
+      padding: 10px 0;
+    }
+
+    #bean-merger-game .bmg-bean {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 60px;
+      height: 60px;
+      line-height: 80px;
+      text-align: center;
+      background: radial-gradient(circle at 30% 30%, #d9b88c, #a9885c);
+      border: 2px solid #5a3d2b;
+      box-shadow: inset 1px 1px 3px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.15);
+      border-radius: 50%;
+      margin: 8px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    #bean-merger-game .bmg-bean:not(.bmg-selected):hover {
+      transform: scale(1.1);
+      box-shadow: inset 1px 1px 3px rgba(0,0,0,0.2), 0 6px 10px rgba(0,0,0,0.2);
+    }
+    
+    #bean-merger-game .bmg-bean.bmg-selected {
+      background: #a4d4a5;
+      border-color: #5a8a6f;
+      animation: bmg-pulse-selected 1s ease-in-out infinite;
+    }
+    
+    #bean-merger-game .bmg-bean.bmg-removing {
+      transform: scale(0);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    #bean-merger-game .bmg-bean.bmg-new {
+        animation: bmg-grow 0.4s ease-out;
+    }
+
+    #bean-merger-game #bmg-opButtons {
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    #bean-merger-game button {
+      padding: 10px 18px;
+      margin: 5px;
+      border: none;
+      background: #5a8a6f;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.2s;
+      font-family: 'Nunito', 'Helvetica Neue', Arial, sans-serif;
+    }
+    #bean-merger-game button:hover {
+      background: #4a7a5f;
+    }
+    #bean-merger-game button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+    
+    #bean-merger-game button#bmg-newGameBtn {
+        background: #d9534f;
+    }
+    #bean-merger-game button#bmg-newGameBtn:hover {
+        background: #c9302c;
+    }
+
+    #bean-merger-game #bmg-log {
+      max-height: 150px;
+      overflow-y: auto;
+      margin-top: 15px;
+      font-size: 0.95em;
+      color: #333;
+      background: #f9f9f9;
+      padding: 12px;
+      border: 1px dashed #dcd8cd;
+      border-radius: 8px;
+    }
+    #bean-merger-game #bmg-log div {
+      margin-bottom: 5px;
+      padding-bottom: 5px;
+      border-bottom: 1px dashed #eee;
+    }
+    #bean-merg.bmg-log div:last-child {
+      border-bottom: none;
+    }
+
+    #bean-merger-game ul#bmg-memoryList {
+      list-style: none;
+      padding-left: 0;
+    }
+    #bean-merger-game ul#bmg-memoryList li {
+      padding: 6px 10px;
+      background: #eef2f8;
+      margin-bottom: 5px;
+      border-radius: 5px;
+    }
+    
+    #bean-merger-game #bmg-win-modal {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(253, 250, 243, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+    #bean-merger-game #bmg-win-modal.bmg-show {
+        opacity: 1;
+        visibility: visible;
+    }
+    #bean-merger-game #bmg-win-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      text-align: center;
+      animation: bmg-bounce-in 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+    #bean-merger-game #bmg-final-bean {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 80px;
+      height: 80px;
+      background: #a4d4a5;
+      border: 3px solid #5a8a6f;
+      border-radius: 50%;
+      font-size: 2em;
+      font-weight: bold;
+      color: #fff;
+      margin: 15px auto;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    #bean-merger-game #bmg-win-modal button {
+        background: #5a8a6f;
+        font-size: 1.1em;
+        padding: 12px 20px;
+    }
+    #bean-merger-game #bmg-win-modal button:hover {
+        background: #4a7a5f;
+    }
+  </style>
+</head>
+<body>
+
+<div id="bean-merger-game">
+  <div class="bmg-section">
+    <h2>Bohnen-Verschmelzer</h2>
+    <p>Wähle genau 2 Bohnen und verschmelze sie. Das Ziel: Am Ende soll nur eine Bohne übrig bleiben!</p>
+    <button onclick="bmg_startGame()" id="bmg-newGameBtn">Neues Spiel</button>
+    
+    <div id="bmg-beans"></div>
+    
+    <div id="bmg-opButtons">
+      <button onclick="bmg_calculate('+')" id="bmg-btn-add">Wachsen (+)</button>
+      <button onclick="bmg_calculate('-')" id="bmg-btn-sub">Schrumpfen (-)</button>
+      <button onclick="bmg_calculate('*')" id="bmg-btn-mul">Vervielfachen (×)</button>
+      <button onclick="bmg_calculate('/')" id="bmg-btn-div">Teilen (÷)</button>
+    </div>
+    
+    <div id="bmg-log"></div>
+  </div>
+
+  <div class="bmg-section">
+    <h2>📓 Gärtner's Notizen</h2>
+    <p>Hier siehst du deine letzten erfolgreichen Verschmelzungen.</p>
+    <ul id="bmg-memoryList"></ul>
+    <button onclick="bmg_clearMemory()">Notizen löschen</button>
+  </div>
+  
+  <div id="bmg-win-modal" style="display: none;">
+      <div id="bmg-win-content">
+        <h2>🏆 Geschafft! 🏆</h2>
+        <p>Du hast alle Bohnen zu einer einzigen verschmolzen:</p>
+        <div id="bmg-final-bean">0</div>
+        <button onclick="bmg_startGame()">Nochmal spielen!</button>
+      </div>
+  </div>
+</div>
+
+<script>
+const BMG_Game = {
+    STORAGE_KEY: 'kiBeanState_namespaced',
+    START_BEAN_COUNT: 5,
+    beans: [],
+    selectedIndices: [],
+    recipeBook: { memory: [] },
+    newBeanIndex: null,
+};
+
+function bmg_startGame() {
+  const modal = document.getElementById('bmg-win-modal');
+  if (modal) {
+      modal.classList.remove('bmg-show');
+      setTimeout(() => { modal.style.display = 'none'; }, 400);
+  }
+  BMG_Game.beans = Array.from({ length: BMG_Game.START_BEAN_COUNT }, () => Math.floor(Math.random() * 15) + 1);
+  BMG_Game.selectedIndices = [];
+  BMG_Game.newBeanIndex = null;
+  bmg_updateBeans();
+  bmg_updateButtons();
+  bmg_log("🌷🌻🌼🐌 Ein neuer Garten wurde angelegt!");
+  bmg_updateMemoryList();
+}
+
+function bmg_updateBeans() {
+  const container = document.getElementById("bmg-beans");
+  if (!container) return;
+  container.innerHTML = "";
+  BMG_Game.beans.forEach((num, i) => {
+    const div = document.createElement("div");
+    div.className = "bmg-bean";
+    div.textContent = num;
+    div.onclick = () => bmg_toggleSelect(i);
+    if (BMG_Game.selectedIndices.includes(i)) div.classList.add("bmg-selected");
+    if (i === BMG_Game.newBeanIndex) {
+        div.classList.add("bmg-new");
+        BMG_Game.newBeanIndex = null;
+    }
+    container.appendChild(div);
+  });
+}
+
+function bmg_toggleSelect(index) {
+  if (BMG_Game.selectedIndices.includes(index)) {
+    BMG_Game.selectedIndices = BMG_Game.selectedIndices.filter(i => i !== index);
+  } else {
+    if (BMG_Game.selectedIndices.length < 2) {
+      BMG_Game.selectedIndices.push(index);
+    }
+  }
+  bmg_updateBeans();
+  bmg_updateButtons();
+}
+
+function bmg_updateButtons() {
+  const canCalculate = BMG_Game.selectedIndices.length === 2;
+  const gameContainer = document.getElementById('bean-merger-game');
+  if (!gameContainer) return;
+  gameContainer.querySelector('#bmg-btn-add').disabled = !canCalculate;
+  gameContainer.querySelector('#bmg-btn-sub').disabled = !canCalculate;
+  gameContainer.querySelector('#bmg-btn-mul').disabled = !canCalculate;
+  gameContainer.querySelector('#bmg-btn-div').disabled = !canCalculate;
+}
+
+function bmg_calculate(op) {
+  if (BMG_Game.selectedIndices.length !== 2) return;
+  const [idx1, idx2] = BMG_Game.selectedIndices;
+  const [val1, val2] = [BMG_Game.beans[idx1], BMG_Game.beans[idx2]];
+  let result;
+  const values = [val1, val2];
+  switch (op) {
+    case '+': result = values[0] + values[1]; break;
+    case '-': result = values[0] - values[1]; break;
+    case '*': result = values[0] * values[1]; break;
+    case '/':
+      if (val2 === 0 || val1 % val2 !== 0) {
+        bmg_log(`⚠️ Division nicht möglich (${val1} ÷ ${val2} ergibt keinen Rest 0).`);
+        return;
+      }
+      result = val1 / val2;
+      break;
+  }
+  if (result < 0 || result > 999) {
+      bmg_log(`⚠️ Ergebnis (${result}) ist zu groß oder zu klein!`);
+      return;
+  }
+  const gameContainer = document.getElementById('bean-merger-game');
+  const beanElements = gameContainer.querySelectorAll('.bmg-bean');
+  const el1 = beanElements[idx1];
+  const el2 = beanElements[idx2];
+  if (el1) el1.classList.add('bmg-removing');
+  if (el2) el2.classList.add('bmg-removing');
+  bmg_log(`🌱 ${val1} ${op} ${val2} = ${result}. Eine neue Bohne wächst!`);
+  BMG_Game.recipeBook.memory.push({ nums: values, result, op });
+  bmg_saveMemory();
+  setTimeout(() => {
+    BMG_Game.beans = BMG_Game.beans.filter((_, i) => !BMG_Game.selectedIndices.includes(i));
+    BMG_Game.beans.push(result);
+    BMG_Game.newBeanIndex = BMG_Game.beans.length - 1; 
+    BMG_Game.selectedIndices = [];
+    bmg_updateBeans();
+    bmg_updateButtons();
+    bmg_updateMemoryList();
+    if (BMG_Game.beans.length === 1) {
+      bmg_log(`🏆 GLÜCKWUNSCH! Du hast alle Bohnen zu EINER verschmolzen: [${BMG_Game.beans[0]}]`);
+      bmg_showWinModal(BMG_Game.beans[0]);
+    }
+  }, 300);
+}
+
+function bmg_log(msg) {
+  const logDiv = document.getElementById("bmg-log");
+  if (!logDiv) return;
+  logDiv.innerHTML = `<div>${msg}</div>` + logDiv.innerHTML;
+}
+
+function bmg_showWinModal(finalValue) {
+  const modal = document.getElementById('bmg-win-modal');
+  const finalBeanDiv = document.getElementById('bmg-final-bean');
+  if (!modal || !finalBeanDiv) return;
+  finalBeanDiv.textContent = finalValue;
+  modal.style.display = 'flex';
+  setTimeout(() => { modal.classList.add('bmg-show'); }, 10);
+}
+
+function bmg_saveMemory() {
+  localStorage.setItem(BMG_Game.STORAGE_KEY, JSON.stringify(BMG_Game.recipeBook));
+}
+
+function bmg_clearMemory() {
+  if (confirm("Möchtest du wirklich alle Notizen löschen?")) {
+      BMG_Game.recipeBook.memory = [];
+      bmg_saveMemory();
+      bmg_updateMemoryList();
+      bmg_log("🗑️ Notizbuch geleert.");
+  }
+}
+
+function bmg_loadMemory() {
+  const data = localStorage.getItem(BMG_Game.STORAGE_KEY);
+  if (data) {
+    try {
+        BMG_Game.recipeBook = JSON.parse(data);
+    } catch(e) {
+        console.error("Fehler beim Laden des Speichers:", e);
+        BMG_Game.recipeBook = { memory: [] };
+    }
+  }
+}
+
+function bmg_updateMemoryList() {
+  const list = document.getElementById("bmg-memoryList");
+  if (!list) return;
+  list.innerHTML = "";
+  BMG_Game.recipeBook.memory.slice(-5).reverse().forEach(entry => {
+    const li = document.createElement("li");
+    li.textContent = `${entry.nums[0]} ${entry.op} ${entry.nums[1]} = ${entry.result}`;
+    list.appendChild(li);
+  });
+  if (BMG_Game.recipeBook.memory.length === 0) {
+      list.innerHTML = "<li>Noch keine Notizen vorhanden.</li>";
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if(document.getElementById('bean-merger-game')) {
+      bmg_loadMemory();
+      bmg_startGame();
+}
+    });
+  </script>
+
+</body>
+</html>
