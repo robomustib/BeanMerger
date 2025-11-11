@@ -72,6 +72,12 @@ Children practice **algorithmic thinking and strategy development**, which are f
 
 ---
 
+## Demo
+Click here to try out:
+[BeanMerger Demo](https://www.mustafa-bilgin.de/bohnenschatzkiste)
+
+---
+
 ## Author
 Developed by **Mustafa Bilgin** as part of the *FUTURE-STEM-HUB* project.  
 The game is designed to combine **computional thinking** with **inclusive and playful educational approaches**.
