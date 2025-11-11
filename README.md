@@ -1,8 +1,6 @@
 # Bean Merger Game
 
-**Bean Merger** is an interactive learning game that promotes mathematical thinking and logical reasoning through play.  
-Players select two numbered “beans,” combine them using a mathematical operation (**+**, **−**, **×**, or **÷**), and create a new bean showing the result.  
-The goal: end up with **just one bean**!
+**Bean Merger** is an interactive learning game that promotes mathematical thinking and logical reasoning through play.Players select two numbered “beans,” combine them using a mathematical operation (**+**, **−**, **×**, or **÷**), and create a new bean showing the result. The goal: end up with **just one bean**!
 
 ---
 
