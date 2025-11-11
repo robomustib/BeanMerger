@@ -60,7 +60,7 @@ Children practice **algorithmic thinking and strategy development**, which are f
 1. Click on two beans to select them.  
 2. Choose an arithmetic operation.  
 3. The two beans merge into a new one with the calculated result.  
-4. Repeat until only one bean remains — you win! 🎉  
+4. Repeat until only one bean remains — you win!  
 
 ---
 
@@ -78,7 +78,7 @@ The game is designed to combine **computional thinking** with **inclusive and pl
 
 ---
 
-## 🪴 License
+## License
 This project can be shared and adapted for **educational and non-commercial use** under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 ---
