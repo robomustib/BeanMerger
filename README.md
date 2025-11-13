@@ -2,8 +2,7 @@
 
 **Bean Merger** is an interactive learning game that promotes mathematical thinking and logical reasoning through play.Players select two numbered “beans,” combine them using a mathematical operation (**+**, **−**, **×**, or **÷**), and create a new bean showing the result. The goal: end up with **just one bean**!
 
-<img src="https://github.com/robomustib/BeanMerger/blob/main/img/beanmergergamelogo.png?raw=true" alt="The Blackbox Simulator Logo" width="50%"/>
-
+<img src="https://github.com/robomustib/BeanMerger/blob/main/img/bohnenverschmelzen_logo.jpg?raw=true" alt="The Blackbox Simulator Logo" width="50%"/>
 ---
 
 ## Learning Objectives
