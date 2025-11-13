@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Der Bohnen-Zähler</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    @keyframes bcz-pulse-active {
+      0% { box-shadow: 0 0 12px rgba(240, 180, 60, 0.6); }
+      50% { box-shadow: 0 0 20px rgba(240, 180, 60, 1); }
+      100% { box-shadow: 0 0 12px rgba(240, 180, 60, 0.6); }
+    }
+    @keyframes bcz-drop-in {
+      from { transform: scale(0.5) translateY(-30px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    @keyframes bcz-feedback-pop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes bcz-celebration {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .bean-counter-game-wrapper {
+      font-family: 'Nunito', 'Helvetica Neue', Arial, sans-serif;
+      background: #fdfaf3;
+      color: #3d352e;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 600px;
+      margin: 20px auto;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .bean-counter-game-wrapper h2 {
+      margin-top: 0;
+      color: #4a7a5f;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 10px;
+      font-size: 1.5em;
+      font-weight: 700;
+      text-align: center;
+    }
+    
+    .bcz-task-area {
+      background: #fff;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .bcz-task-area p {
+      font-size: 1.8em;
+      font-weight: 700;
+      margin: 0;
+      color: #333;
+    }
+    .bcz-task-area span {
+      display: inline-block;
+      min-width: 40px;
+      padding: 0 10px;
+      background: #eef2f8;
+      border-radius: 8px;
+      color: #4a7a5f;
+    }
+    
+    .bcz-timer {
+      width: 100%;
+      height: 10px;
+      background: #e0e0e0;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .bcz-timer-bar {
+      height: 100%;
+      background: #5a8a6f;
+      border-radius: 5px;
+      width: 100%;
+      transition: width 0.1s linear;
+    }
+
+    .bcz-interaction-area {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .bcz-bean-source {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 4em;
+      width: 100px;
+      height: 100px;
+      background: #d9b88c;
+      border: 3px dashed #a9885c;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+      line-height: 1;
+    }
+    .bcz-bean-source:hover {
+      transform: scale(1.1);
+      background: #e6c59e;
+    }
+
+    .bcz-baskets-container {
+      display: flex;
+      flex-grow: 1;
+      gap: 15px;
+    }
+    .bcz-basket {
+      flex: 1;
+      background: #fff;
+      border: 3px solid #dcd8cd;
+      border-radius: 12px;
+      padding: 10px;
+      min-height: 150px;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+      cursor: pointer;
+    }
+    .bcz-basket.bcz-active {
+      border-color: #f0b43c;
+      animation: bcz-pulse-active 1.2s infinite;
+    }
+    .bcz-basket-header {
+      font-size: 1.1em;
+      font-weight: 700;
+      color: #555;
+      text-align: center;
+      border-bottom: 1px dashed #ccc;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
+    .bcz-basket-header span {
+      font-size: 1.3em;
+      color: #3d352e;
+    }
+    .bcz-bean-visuals {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      padding: 5px;
+      min-height: 50px;
+    }
+    
+    .bcz-bean-icon {
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle at 30% 30%, #d9b88c, #a9885c);
+      border-radius: 50%;
+      box-shadow: inset 1px 1px 2px rgba(0,0,0,0.2);
+      animation: bcz-drop-in 0.3s ease-out;
+    }
+
+    .bcz-controls {
+      margin-top: 20px;
+      text-align: center;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    .bean-counter-game-wrapper button {
+      padding: 12px 20px;
+      border: none;
+      background: #5a8a6f;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1em;
+      font-weight: 700;
+      transition: background-color 0.2s, transform 0.2s;
+      font-family: 'Nunito', 'Helvetica Neue', Arial, sans-serif;
+    }
+    .bean-counter-game-wrapper button:hover {
+      background: #4a7a5f;
+      transform: translateY(-2px);
+    }
+    .bean-counter-game-wrapper button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .bean-counter-game-wrapper button.bcz-check-btn {
+      background: #3498db;
+    }
+    .bean-counter-game-wrapper button.bcz-check-btn:hover {
+      background: #2980b9;
+    }
+    .bean-counter-game-wrapper button.bcz-reset-btn {
+      background: #e74c3c;
+    }
+    .bean-counter-game-wrapper button.bcz-reset-btn:hover {
+      background: #c0392b;
+    }
+
+    .bcz-feedback-message {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(253, 250, 243, 0.95);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      font-size: 2em;
+      font-weight: 700;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      animation: bcz-feedback-pop 0.4s ease-out;
+      text-align: center;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .bcz-feedback-message.bcz-show {
+      opacity: 1;
+      visibility: visible;
+    }
+    .bcz-feedback-message.bcz-correct {
+      color: #27ae60;
+    }
+    .bcz-feedback-message.bcz-wrong {
+      color: #c0392b;
+    }
+    .bcz-feedback-message.bcz-game-over {
+      color: #c0392b;
+      background: rgba(253, 250, 243, 0.98);
+    }
+    .bcz-feedback-message.bcz-game-won {
+      color: #27ae60;
+      background: rgba(253, 250, 243, 0.98);
+      animation: bcz-celebration 2s infinite;
+    }
+
+    .bcz-game-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      font-size: 1.2em;
+      font-weight: 700;
+    }
+    .bcz-score-area, .bcz-level-area {
+      color: #555;
+    }
+    .bcz-score {
+      color: #3d352e;
+      background: #f0e6d2;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .bcz-level {
+      color: #3d352e;
+      background: #e6f7ff;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .bcz-rounds {
+      color: #3d352e;
+      background: #fff0e6;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    
+    .bcz-level-progress {
+      width: 100%;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      margin-top: 5px;
+      overflow: hidden;
+    }
+    .bcz-level-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #5a8a6f, #4a7a5f);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+    
+    @media (max-width: 768px) {
+      .bean-counter-game-wrapper {
+        padding: 15px;
+        margin: 10px auto;
+      }
+      
+      .bcz-interaction-area {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .bcz-baskets-container {
+        width: 100%;
+      }
+      
+      .bcz-controls {
+        flex-direction: column;
+      }
+      
+      .bcz-task-area p {
+        font-size: 1.5em;
+      }
+      
+      .bcz-game-info {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+      }
+    }
+    
+  </style>
+</head>
+<body>
+
+<div class="bean-counter-game-wrapper">
+  <h2>Der Bohnen-Zähler</h2>
+  
+  <div class="bcz-task-area">
+    <p>
+      Ziel: <span class="bcz-target-number">?</span>
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      Op: <span class="bcz-operator-symbol">?</span>
+    </p>
+  </div>
+  
+  <div class="bcz-timer"><div class="bcz-timer-bar"></div></div>
+  
+  <div class="bcz-interaction-area">
+    
+    <div class="bcz-bean-source" title="Bohne zum aktiven Korb hinzufügen">
+    <img src="https://www.mustafa-bilgin.de/iconbean.png" width="100%" height="100%"> 
+    </div>
+    
+    <div class="bcz-baskets-container">
+      <div class="bcz-basket bcz-active" data-basket="A">
+        <div class="bcz-basket-header">Korb A: <span class="bcz-counter" data-basket="A">0</span></div>
+        <div class="bcz-bean-visuals" data-basket="A"></div>
+      </div>
+      
+      <div class="bcz-basket" data-basket="B">
+        <div class="bcz-basket-header">Korb B: <span class="bcz-counter" data-basket="B">0</span></div>
+        <div class="bcz-bean-visuals" data-basket="B"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bcz-controls">
+    <button class="bcz-new-game-btn" title="Neues Spiel starten (setzt Punkte zurück)">Neues Spiel</button>
+    <button class="bcz-reset-btn" title="Beide Körbe leeren">Körbe leeren</button>
+    <button class="bcz-check-btn" id="bcz-check-button">Verschmelzen!</button>
+  </div>
+  
+  <div class="bcz-game-info">
+    <div class="bcz-score-area">
+      Punkte: <span class="bcz-score">0</span>
+    </div>
+    <div class="bcz-level-area">
+      Level: <span class="bcz-level">1</span>
+    </div>
+    <div class="bcz-rounds-area">
+      Runden: <span class="bcz-rounds">0/15</span>
+    </div>
+  </div>
+  
+  <div class="bcz-level-progress">
+    <div class="bcz-level-progress-bar" style="width: 0%"></div>
+  </div>
+  
+  <div class="bcz-feedback-message"></div>
+
+</div>
+
+<script>
+(function() {
+  'use strict';
+  
+  const BCZ_Game = {
+    score: 0,
+    targetNumber: 0,
+    operator: '+',
+    basketA: 0,
+    basketB: 0,
+    activeBasket: 'A',
+    timerId: null,
+    timerDuration: 20,
+    maxBeansPerBasket: 10,
+    level: 1,
+    roundsCompleted: 0,
+    roundsToWin: 15,
+    gameActive: true,
+    difficultySettings: {
+      1: { 
+        timer: 20, 
+        maxNumber: 5, 
+        operators: ['+', '-'],
+        operatorWeights: [60, 40]
+      },
+      2: { 
+        timer: 15, 
+        maxNumber: 8, 
+        operators: ['+', '-'],
+        operatorWeights: [50, 50]
+      },
+      3: { 
+        timer: 15,
+        maxNumber: 12, 
+        operators: ['+', '-', '*'],
+        operatorWeights: [40, 40, 20]
+      }
+    },
+    lastOperators: []
+  };
+
+  function bcz_initGame() {
+    BCZ_Game.score = 0;
+    BCZ_Game.level = 1;
+    BCZ_Game.roundsCompleted = 0;
+    BCZ_Game.gameActive = true;
+    BCZ_Game.lastOperators = [];
+    bcz_updateLevelProgress();
+    bcz_nextLevel();
+  }
+
+  function bcz_nextLevel() {
+    if (!BCZ_Game.gameActive) return;
+    
+    bcz_hideFeedback();
+    bcz_clearTimer();
+    bcz_clearBaskets();
+    bcz_generateProblem();
+    bcz_updateUI();
+    bcz_startTimer();
+    
+    const checkBtn = document.getElementById('bcz-check-button');
+    if (checkBtn) {
+      checkBtn.disabled = false;
+    }
+    const beanSource = document.querySelector('.bcz-bean-source');
+    if (beanSource) {
+      beanSource.style.pointerEvents = 'auto';
+    }
+  }
+
+  function bcz_selectOperator(availableOperators, weights) {
+    if (BCZ_Game.lastOperators.length < 2) {
+      return bcz_weightedRandom(availableOperators, weights);
+    }
+    
+    const lastTwoSame = BCZ_Game.lastOperators[0] === BCZ_Game.lastOperators[1];
+    const lastOperator = BCZ_Game.lastOperators[0];
+    
+    if (lastTwoSame) {
+      const filteredOperators = availableOperators.filter(op => op !== lastOperator);
+      const filteredWeights = availableOperators.map((op, index) => 
+        op !== lastOperator ? weights[index] : 0
+      );
+      
+      const totalWeight = filteredWeights.reduce((sum, weight) => sum + weight, 0);
+      const normalizedWeights = filteredWeights.map(weight => (weight / totalWeight) * 100);
+      
+      return bcz_weightedRandom(filteredOperators, normalizedWeights);
+    }
+    
+    return bcz_weightedRandom(availableOperators, weights);
+  }
+
+  function bcz_weightedRandom(items, weights) {
+    const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+    let random = Math.random() * totalWeight;
+    
+    for (let i = 0; i < items.length; i++) {
+      random -= weights[i];
+      if (random <= 0) {
+        return items[i];
+      }
+    }
+    
+    return items[items.length - 1];
+  }
+
+  function bcz_generateProblem() {
+    const settings = BCZ_Game.difficultySettings[BCZ_Game.level];
+    
+    BCZ_Game.operator = bcz_selectOperator(settings.operators, settings.operatorWeights);
+    
+    BCZ_Game.lastOperators.unshift(BCZ_Game.operator);
+    if (BCZ_Game.lastOperators.length > 2) {
+      BCZ_Game.lastOperators.pop();
+    }
+    
+    BCZ_Game.timerDuration = settings.timer;
+    
+    let numA, numB, target;
+
+    if (BCZ_Game.operator === '+') {
+      numA = Math.floor(Math.random() * settings.maxNumber) + 1;
+      numB = Math.floor(Math.random() * settings.maxNumber) + 1;
+      target = numA + numB;
+    } else if (BCZ_Game.operator === '-') {
+      numA = Math.floor(Math.random() * settings.maxNumber) + 3;
+      numB = Math.floor(Math.random() * (numA - 1)) + 1;
+      target = numA - numB;
+    } else if (BCZ_Game.operator === '*') {
+      numA = Math.floor(Math.random() * 5) + 2;
+      numB = Math.floor(Math.random() * 5) + 2;
+      target = numA * numB;
+    }
+    
+    BCZ_Game.targetNumber = target;
+  }
+
+  function bcz_checkLevelUp() {
+    if (BCZ_Game.roundsCompleted >= 5 && BCZ_Game.level < 2) {
+      BCZ_Game.level = 2;
+      bcz_showFeedback(true, "Level 2 erreicht! 🚀<br>Schneller und schwieriger!");
+      return true;
+    }
+    else if (BCZ_Game.roundsCompleted >= 10 && BCZ_Game.level < 3) {
+      BCZ_Game.level = 3;
+      bcz_showFeedback(true, "Level 3 erreicht! <br>Multiplikation aktiviert!");
+      return true;
+    }
+    return false;
+  }
+
+  function bcz_checkGameEnd() {
+    if (BCZ_Game.score <= -10) {
+      BCZ_Game.gameActive = false;
+      bcz_showGameOver();
+      return true;
+    }
+    
+    if (BCZ_Game.roundsCompleted >= BCZ_Game.roundsToWin) {
+      BCZ_Game.gameActive = false;
+      bcz_showGameWon();
+      return true;
+    }
+    
+    return false;
+  }
+
+  function bcz_selectBasket(basketId) {
+    if (!BCZ_Game.gameActive) return;
+    BCZ_Game.activeBasket = basketId;
+    const baskets = document.querySelectorAll('.bcz-basket');
+    
+    baskets.forEach(basket => {
+      if (basket.getAttribute('data-basket') === basketId) {
+        basket.classList.add('bcz-active');
+      } else {
+        basket.classList.remove('bcz-active');
+      }
+    });
+  }
+
+  function bcz_addBean() {
+    if (!BCZ_Game.gameActive) return;
+    
+    if (BCZ_Game.activeBasket === 'A') {
+      if (BCZ_Game.basketA < BCZ_Game.maxBeansPerBasket) {
+        BCZ_Game.basketA++;
+      }
+    } else {
+      if (BCZ_Game.basketB < BCZ_Game.maxBeansPerBasket) {
+        BCZ_Game.basketB++;
+      }
+    }
+    bcz_updateUI();
+  }
+
+  function bcz_clearBaskets() {
+    if (!BCZ_Game.gameActive) return;
+    BCZ_Game.basketA = 0;
+    BCZ_Game.basketB = 0;
+    bcz_updateUI();
+  }
+
+  function bcz_checkAnswer() {
+    if (!BCZ_Game.gameActive) return;
+    
+    bcz_clearTimer();
+    
+    const checkBtn = document.getElementById('bcz-check-button');
+    if (checkBtn) {
+      checkBtn.disabled = true;
+    }
+    
+    const beanSource = document.querySelector('.bcz-bean-source');
+    if (beanSource) {
+      beanSource.style.pointerEvents = 'none';
+    }
+
+    const a = BCZ_Game.basketA;
+    const b = BCZ_Game.basketB;
+    const op = BCZ_Game.operator;
+    const target = BCZ_Game.targetNumber;
+    
+    let result;
+    let isCorrect = false;
+
+    if (op === '+') {
+      result = a + b;
+      isCorrect = (result === target);
+    } else if (op === '-') {
+      result = a - b;
+      isCorrect = (result === target);
+    } else if (op === '*') {
+      result = a * b;
+      isCorrect = (result === target);
+    }
+    
+    if (isCorrect) {
+      BCZ_Game.score += 10;
+      BCZ_Game.roundsCompleted++;
+      bcz_showFeedback(true, "Richtig! +10 Punkte");
+      
+      const levelUp = bcz_checkLevelUp();
+      const gameEnd = bcz_checkGameEnd();
+      
+      if (!gameEnd) {
+        if (levelUp) {
+          setTimeout(bcz_nextLevel, 3000);
+        } else {
+          setTimeout(bcz_nextLevel, 1500);
+        }
+      }
+    } else {
+      BCZ_Game.score -= 5;
+      bcz_showFeedback(false, `Falsch! -5 Punkte (${a} ${op} ${b} = ${result})`);
+      
+      const gameEnd = bcz_checkGameEnd();
+      if (!gameEnd) {
+        setTimeout(bcz_nextLevel, 2000);
+      }
+    }
+    
+    bcz_updateLevelProgress();
+  }
+
+  function bcz_startTimer() {
+    bcz_clearTimer();
+    const timerBar = document.querySelector('.bcz-timer-bar');
+    if (!timerBar) return;
+    
+    timerBar.style.transition = 'none';
+    timerBar.style.width = '100%';
+    timerBar.style.background = '#5a8a6f';
+    
+    setTimeout(() => {
+      timerBar.style.transition = `width ${BCZ_Game.timerDuration}s linear`;
+      timerBar.style.width = '0%';
+    }, 50);
+    
+    BCZ_Game.timerId = setTimeout(() => {
+      bcz_handleTimeOut();
+    }, BCZ_Game.timerDuration * 1000);
+  }
+
+  function bcz_handleTimeOut() {
+    if (!BCZ_Game.gameActive) return;
+    
+    const checkBtn = document.getElementById('bcz-check-button');
+    if (checkBtn) {
+      checkBtn.disabled = true;
+    }
+    
+    const beanSource = document.querySelector('.bcz-bean-source');
+    if (beanSource) {
+      beanSource.style.pointerEvents = 'none';
+    }
+    
+    BCZ_Game.score -= 5;
+    bcz_showFeedback(false, "Zeit um! -5 Punkte");
+    
+    const gameEnd = bcz_checkGameEnd();
+    if (!gameEnd) {
+      setTimeout(bcz_nextLevel, 2000);
+    }
+    
+    bcz_updateLevelProgress();
+  }
+
+  function bcz_clearTimer() {
+    if (BCZ_Game.timerId) {
+      clearTimeout(BCZ_Game.timerId);
+      BCZ_Game.timerId = null;
+    }
+    const timerBar = document.querySelector('.bcz-timer-bar');
+    if (timerBar) {
+      const currentWidth = timerBar.offsetWidth;
+      timerBar.style.transition = 'none';
+      timerBar.style.width = `${currentWidth}px`;
+    }
+  }
+
+  function bcz_updateUI() {
+    const targetNumber = document.querySelector('.bcz-target-number');
+    const operatorSymbol = document.querySelector('.bcz-operator-symbol');
+    
+    if (targetNumber) targetNumber.textContent = BCZ_Game.targetNumber;
+    if (operatorSymbol) operatorSymbol.textContent = BCZ_Game.operator;
+    
+    const counterA = document.querySelector('.bcz-counter[data-basket="A"]');
+    const counterB = document.querySelector('.bcz-counter[data-basket="B"]');
+    
+    if (counterA) counterA.textContent = BCZ_Game.basketA;
+    if (counterB) counterB.textContent = BCZ_Game.basketB;
+    
+    bcz_updateBasketVisuals('A', BCZ_Game.basketA);
+    bcz_updateBasketVisuals('B', BCZ_Game.basketB);
+    
+    const scoreElement = document.querySelector('.bcz-score');
+    if (scoreElement) scoreElement.textContent = BCZ_Game.score;
+    
+    const levelElement = document.querySelector('.bcz-level');
+    if (levelElement) levelElement.textContent = BCZ_Game.level;
+    
+    const roundsElement = document.querySelector('.bcz-rounds');
+    if (roundsElement) roundsElement.textContent = `${BCZ_Game.roundsCompleted}/${BCZ_Game.roundsToWin}`;
+  }
+
+  function bcz_updateLevelProgress() {
+    const progressBar = document.querySelector('.bcz-level-progress-bar');
+    if (progressBar) {
+      const progress = (BCZ_Game.roundsCompleted / BCZ_Game.roundsToWin) * 100;
+      progressBar.style.width = `${progress}%`;
+    }
+  }
+
+  function bcz_updateBasketVisuals(basketId, count) {
+    const container = document.querySelector(`.bcz-bean-visuals[data-basket="${basketId}"]`);
+    if (!container) return;
+    container.innerHTML = "";
+    
+    for (let i = 0; i < count; i++) {
+      const beanIcon = document.createElement('div');
+      beanIcon.className = 'bcz-bean-icon';
+      container.appendChild(beanIcon);
+    }
+  }
+
+  function bcz_showFeedback(isCorrect, message) {
+    const feedbackEl = document.querySelector('.bcz-feedback-message');
+    if (!feedbackEl) return;
+    feedbackEl.innerHTML = message;
+    feedbackEl.className = 'bcz-feedback-message bcz-show';
+    if (isCorrect) {
+      feedbackEl.classList.add('bcz-correct');
+    } else {
+      feedbackEl.classList.add('bcz-wrong');
+    }
+  }
+
+  function bcz_showGameOver() {
+    const feedbackEl = document.querySelector('.bcz-feedback-message');
+    if (!feedbackEl) return;
+    
+    feedbackEl.innerHTML = '💀 Spiel verloren!<br>Punkte: ' + BCZ_Game.score + 
+      '<br><br><button id="bcz-restart-overlay-btn" style="padding: 10px 20px; font-size: 1rem; cursor: pointer; border-radius: 8px; border: none; background: white; color: #c0392b; font-weight: bold; font-family: inherit;">Neues Spiel</button>';
+    
+    feedbackEl.className = 'bcz-feedback-message bcz-show bcz-game-over';
+    bcz_clearTimer();
+
+    const restartBtn = document.getElementById('bcz-restart-overlay-btn');
+    if (restartBtn) {
+      restartBtn.addEventListener('click', function() {
+        bcz_initGame();
+      });
+    }
+  }
+
+  function bcz_showGameWon() {
+    const feedbackEl = document.querySelector('.bcz-feedback-message');
+    if (!feedbackEl) return;
+    
+    feedbackEl.innerHTML = '🎉 Du hast gewonnen!<br>Punkte: ' + BCZ_Game.score + 
+      '<br><small>Herzlichen Glückwunsch!</small>' +
+      '<br><br><button id="bcz-restart-overlay-btn" style="padding: 10px 20px; font-size: 1rem; cursor: pointer; border-radius: 8px; border: none; background: white; color: #27ae60; font-weight: bold; font-family: inherit;">Nochmal spielen</button>';
+      
+    feedbackEl.className = 'bcz-feedback-message bcz-show bcz-game-won';
+    bcz_clearTimer();
+
+    const restartBtn = document.getElementById('bcz-restart-overlay-btn');
+    if (restartBtn) {
+      restartBtn.addEventListener('click', function() {
+        bcz_initGame();
+      });
+    }
+  }
+
+  function bcz_hideFeedback() {
+    const feedbackEl = document.querySelector('.bcz-feedback-message');
+    if (feedbackEl) {
+      feedbackEl.className = 'bcz-feedback-message';
+    }
+  }
+
+  function bcz_setupEventListeners() {
+    const beanSource = document.querySelector('.bcz-bean-source');
+    if (beanSource) {
+      beanSource.addEventListener('click', bcz_addBean);
+    }
+    
+    const baskets = document.querySelectorAll('.bcz-basket');
+    baskets.forEach(basket => {
+      basket.addEventListener('click', function() {
+        const basketId = this.getAttribute('data-basket');
+        bcz_selectBasket(basketId);
+      });
+    });
+    
+    const newGameBtn = document.querySelector('.bcz-new-game-btn');
+    if (newGameBtn) {
+      newGameBtn.addEventListener('click', bcz_initGame);
+    }
+    
+    const resetBtn = document.querySelector('.bcz-reset-btn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', bcz_clearBaskets);
+    }
+    
+    const checkBtn = document.getElementById('bcz-check-button');
+    if (checkBtn) {
+      checkBtn.addEventListener('click', bcz_checkAnswer);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if(document.querySelector('.bean-counter-game-wrapper')) {
+      bcz_setupEventListeners();
+      bcz_initGame();
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>
