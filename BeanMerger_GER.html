@@ -110,20 +110,13 @@
     }
     
     #bmg-wrapper .bmg-bean span.num {
-      font-size: 1.6em;
+      font-size: 2em;
       font-weight: 600;
       color: #5a3d2b;
       line-height: 1;
     }
     #bmg-wrapper .bmg-bean.is-zero span.num { color: #fff; }
     
-    #bmg-wrapper .bmg-bean span.face {
-      font-size: 0.8em;
-      margin-top: -2px;
-      opacity: 0.8;
-      color: #5a3d2b;
-    }
-
     #bmg-wrapper .bmg-bean:hover { transform: translateY(-4px); }
     
     #bmg-wrapper .bmg-bean.bmg-selected {
@@ -283,7 +276,7 @@
 
   <div class="bmg-card">
     <div class="bmg-header">
-      <h2 class="bmg-title">Mission: Null Komma Nix</h2>
+      <h2 class="bmg-title">BeanMerger: Null Komma Nix</h2>
       <div class="jackpot-badge">🏆 Score: <span id="bmg-jackpot">0</span></div>
       <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 0.9em; color: white;">Ziel: Erschaffe EINE Bohne mit Wert 0!</p>
     </div>
@@ -311,7 +304,7 @@
           <h2 id="bmg-modal-title" class="bmg-title" style="color:#333; font-size:1.8em;">TITEL</h2>
           <p id="bmg-modal-msg" style="margin: 10px 0;">Nachricht</p>
           <div class="bmg-result-circle" id="bmg-modal-score">0</div>
-          <button onclick="bmgGame.start()" class="bmg-btn" style="background: #4a7a5f; margin-top: 10px;">Neues Spiel</button>
+          <button onclick="bmgGame.start()" class="bmg-btn" style="background: #4a7a5f; margin-top: 10px;">Nochmal spielen</button>
         </div>
     </div>
   </div>
@@ -321,7 +314,6 @@
       beans: [],
       selected: [],
       jackpot: 0,
-      faces: ['OvO', 'UwU', '^_^', '•_•', '>.<', 'xD', 'OoO'],
       wrapper: document.getElementById('bmg-wrapper'),
       
       start: function() {
@@ -349,9 +341,8 @@
               if (i === newIdx) cssClass += "bmg-new ";
               
               btn.className = cssClass;
-              const face = num === 0 ? '★_★' : this.faces[num % this.faces.length];
               
-              btn.innerHTML = `<span class="num">${num}</span><span class="face">${face}</span>`;
+              btn.innerHTML = `<span class="num">${num}</span>`;
               btn.onclick = () => this.toggle(i);
               container.appendChild(btn);
           });
@@ -440,7 +431,7 @@
               score.style.background = "#ffd700";
               box.style.borderColor = "#ffd700";
               this.confetti();
-              this.log("🏆 Score geknackt! Fantastisch!");
+              this.log("🏆 Jackpot geknackt! Fantastisch!");
           } else {
               title.innerText = "❌ KNAPP DANEBEN!";
               title.style.color = "#d63031";
