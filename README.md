@@ -90,6 +90,6 @@ The game is designed to combine **computional thinking** with **inclusive and pl
 ---
 
 ## License
-This project can be shared and adapted for **educational and non-commercial use** under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+This project is licensed under the MIT License. Copyright (c) 2025 Mustafa Bilgin
 
 ---
