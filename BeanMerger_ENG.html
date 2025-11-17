@@ -110,20 +110,13 @@
     }
     
     #bmg-wrapper .bmg-bean span.num {
-      font-size: 1.6em;
+      font-size: 2em;
       font-weight: 600;
       color: #5a3d2b;
       line-height: 1;
     }
     #bmg-wrapper .bmg-bean.is-zero span.num { color: #fff; }
     
-    #bmg-wrapper .bmg-bean span.face {
-      font-size: 0.8em;
-      margin-top: -2px;
-      opacity: 0.8;
-      color: #5a3d2b;
-    }
-
     #bmg-wrapper .bmg-bean:hover { transform: translateY(-4px); }
     
     #bmg-wrapper .bmg-bean.bmg-selected {
@@ -284,7 +277,7 @@
   <div class="bmg-card">
     <div class="bmg-header">
       <h2 class="bmg-title">Mission: Zero Hero</h2>
-      <div class="jackpot-badge">🏆 Jackpot: <span id="bmg-jackpot">0</span></div>
+      <div class="jackpot-badge">🏆 Score: <span id="bmg-jackpot">0</span></div>
       <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 0.9em; color: white;">Goal: Create ONE bean with the value 0!</p>
     </div>
 
@@ -321,7 +314,6 @@
       beans: [],
       selected: [],
       jackpot: 0,
-      faces: ['', '', '', '', '>.<', '', ''],
       wrapper: document.getElementById('bmg-wrapper'),
       
       start: function() {
@@ -349,9 +341,8 @@
               if (i === newIdx) cssClass += "bmg-new ";
               
               btn.className = cssClass;
-              const face = num === 0 ? '' : this.faces[num % this.faces.length];
               
-              btn.innerHTML = `<span class="num">${num}</span><span class="face">${face}</span>`;
+              btn.innerHTML = `<span class="num">${num}</span>`;
               btn.onclick = () => this.toggle(i);
               container.appendChild(btn);
           });
