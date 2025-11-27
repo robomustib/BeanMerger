@@ -89,6 +89,27 @@ The game is designed to combine **computional thinking** with **inclusive and pl
 
 ---
 
+## Citation
+
+If you use this software for your research, please cite it using the DOI:
+
+**APA Format (7th Ed.):**
+> Bilgin, M. (2025). *Bean Merger – Mission: Zero Hero* (Version 1.0.0) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.17635194 
+
+**BibTeX:**
+```bibtex
+@software{gladia_batch_transcriber,
+  author       = {Bilgin, Mustafa},
+  title        = {Bean Merger – Mission: Zero Hero},
+  year         = {2025},
+  publisher    = {Zenodo},
+  version      = {1.0.0},
+  doi          = {10.5281/zenodo.17635194},
+  url          = {[https://doi.org/10.5281/zenodo.17635194](https://doi.org/10.5281/zenodo.17635194)}  
+}
+
+```
+
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
