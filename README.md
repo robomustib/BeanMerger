@@ -98,7 +98,7 @@ If you use this software for your research, please cite it using the DOI:
 
 **BibTeX:**
 ```bibtex
-@software{gladia_batch_transcriber,
+@software{BeanMerger,
   author       = {Bilgin, Mustafa},
   title        = {Bean Merger – Mission: Zero Hero},
   year         = {2025},
