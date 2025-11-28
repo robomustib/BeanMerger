@@ -59,6 +59,9 @@ Children practice **algorithmic thinking and strategy development**, which are f
 - **JavaScript** – controls the game logic (creating, merging, and storing beans)  
 - **LocalStorage** – saves the player’s progress in the browser  
 
+# Flowchart
+<img src="https://github.com/robomustib/BeanMerger/blob/main/img/flowchart_beanmerger.svg" alt="Flowchart of Fatma" width="50%"/>
+
 ---
 
 ## How to Play
