@@ -1,6 +1,6 @@
 # Bean Merger Game
 
-**Bean Merger** is an interactive learning game that promotes mathematical thinking and logical reasoning through play. In this specific mission, players must combine numbers to crack the safe!.Players select two numbered “beans,” combine them using a mathematical operation (**+**, **−**, **×**, or **÷**), and merge them into a new result.The Challenge: You win the Jackpot only if the final remaining bean has the value 0.
+**Bean Merger** is an interactive learning game that promotes mathematical thinking and logical reasoning through a playful way. In its specific bean mission, players must combine numbers to crack the safe!. Here players select two numbered “beans,” and combine them using a mathematical operation (**+**, **−**, **×**, or **÷**), and merge them into a new result. The Challenge ist that you win the Jackpot only if the final remaining bean has the value 0.
 
 <img src="https://github.com/robomustib/BeanMerger/blob/main/img/bohnenverschmelzen_logo.jpg?raw=true" alt="The Blackbox Simulator Logo" width="50%"/>
 
